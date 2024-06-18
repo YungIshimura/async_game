@@ -14,15 +14,15 @@ def draw(canvas):
 
     coroutines = get_star_coroutines(canvas)
     coroutines.append(get_fire_animation_coroutine(canvas))
-    animate_spaceship_coroutine = get_spaceship_animation_coroutine(canvas)
-    coroutines.append(animate_spaceship_coroutine)
+    # animate_spaceship_coroutine = get_spaceship_animation_coroutine(canvas)
+    # coroutines.append(animate_spaceship_coroutine)
 
     while True:
-        for coroutine in coroutines:
+        for courutine in coroutines.copy():
             try:
-                coroutine.send(None)
+                courutine.send(None)     
             except StopIteration:
-                coroutines.remove(coroutine)
+                coroutines.remove(courutine)
         canvas.refresh()
 
 

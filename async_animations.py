@@ -1,32 +1,29 @@
 import asyncio
 import curses
-from random import randint
-
 from curses_tools import draw_frame, read_controls
 from curses_tools import check_possibility_of_movement
 
 
-async def blink(canvas, row, column, symbol='*'):
-    delay = randint(100, 10000)
+async def blink(canvas, row, column, offset_tics, symbol='*'):
     canvas.addstr(row, column, symbol, curses.A_DIM)
-    for _ in range(delay):
+    for _ in range(offset_tics):
         await asyncio.sleep(0)
-
+    
     while True:
         canvas.addstr(row, column, symbol, curses.A_DIM)
-        for _ in range(10000):
+        for _ in range(20):
             await asyncio.sleep(0)
 
         canvas.addstr(row, column, symbol)
-        for _ in range(5000):
+        for _ in range(8):
             await asyncio.sleep(0)
 
         canvas.addstr(row, column, symbol, curses.A_BOLD)
-        for _ in range(4000):
+        for _ in range(5):
             await asyncio.sleep(0)
 
         canvas.addstr(row, column, symbol)
-        for _ in range(5000):
+        for _ in range(8):
             await asyncio.sleep(0)
 
 
@@ -34,7 +31,7 @@ async def animate_spaceship(canvas, row, column, animations):
     while True:
         for animation in animations:
             for i in range(1500):
-                row_shift, column_shift, space = read_controls(canvas)
+                row_shift, column_shift, _ = read_controls(canvas)
                 if i == 1499:
                     draw_frame(canvas, row, column, animation, True)
                     break
@@ -63,11 +60,11 @@ async def fire(canvas, start_row, start_column, rows_speed=-0.3, columns_speed=0
     row, column = start_row, start_column
 
     canvas.addstr(round(row), round(column), '*')
-    for _ in range(500):
+    for _ in range(5):
         await asyncio.sleep(0)
 
     canvas.addstr(round(row), round(column), 'O')
-    for _ in range(500):
+    for _ in range(5):
         await asyncio.sleep(0)
     canvas.addstr(round(row), round(column), ' ')
 
