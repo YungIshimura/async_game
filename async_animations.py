@@ -3,16 +3,17 @@ import asyncio
 import curses
 import random
 from itertools import cycle
-from typing import List
 from curses_tools import draw_frame, read_controls
-from tools import check_possibility_of_movement
+from tools import check_possibility_of_movement, get_spaceship_animations
 from config import CANVAS_SYMBOLS, FloatInt
 
 
-async def fire(canvas: curses.window, start_row: FloatInt, start_column: FloatInt, rows_speed: FloatInt=-0.3, columns_speed: FloatInt=0) -> None:
+async def fire(canvas: curses.window, rows_speed: FloatInt = -0.3,
+               columns_speed: FloatInt = 0) -> None:
     """Display animation of gun shot, direction and speed can be specified."""
 
-    row, column = start_row, start_column
+    canvas_height, canvas_width = canvas.getmaxyx()
+    row, column = canvas_height/2, canvas_width/2
 
     canvas.addstr(round(row), round(column), '*')
     await asyncio.sleep(0)
@@ -39,8 +40,11 @@ async def fire(canvas: curses.window, start_row: FloatInt, start_column: FloatIn
         column += columns_speed
 
 
-async def blink(canvas: curses.window, row: FloatInt, column: FloatInt, symbols: str=CANVAS_SYMBOLS) -> None:
+async def blink(canvas: curses.window, symbols: str = CANVAS_SYMBOLS) -> None:
     symbol = random.choice(symbols)
+    canvas_height, canvas_width = canvas.getmaxyx()
+    row = random.randint(1, canvas_height-2)
+    column = random.randint(1, canvas_width-2)
 
     async def change_brightness(attr):
         tic = random.randint(1, 20)
@@ -55,7 +59,12 @@ async def blink(canvas: curses.window, row: FloatInt, column: FloatInt, symbols:
         await change_brightness(0)
 
 
-async def animate_spaceship(canvas: curses.window, row: FloatInt, column: FloatInt, animations: List[str]) -> None:
+async def animate_spaceship(canvas: curses.window) -> None:
+    animations = get_spaceship_animations()
+    canvas_height, canvas_width = canvas.getmaxyx()
+    row = canvas_height / 2
+    column = canvas_width / 2 - 2
+
     for animation in cycle(animations):
         row_shift, column_shift, _ = read_controls(canvas)
 

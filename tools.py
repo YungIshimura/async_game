@@ -5,7 +5,6 @@ import curses
 
 
 def get_frame_size(text: str) -> Tuple[int, int]:
-    """Calculate size of multiline text fragment. Returns pair (rows number, colums number)"""
 
     lines = text.splitlines()
     rows = len(lines)
@@ -14,7 +13,8 @@ def get_frame_size(text: str) -> Tuple[int, int]:
     return rows, columns
 
 
-def check_possibility_of_movement(canvas: curses.window, row: FloatInt, column: FloatInt, animation: str) -> bool:
+def check_possibility_of_movement(canvas: curses.window, row: FloatInt,
+                                  column: FloatInt, animation: str) -> bool:
     canvas_rows, canvas_columns = canvas.getmaxyx()
     border = 1
     frame_rows, frame_columns = get_frame_size(animation)

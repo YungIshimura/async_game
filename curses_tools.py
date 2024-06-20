@@ -35,8 +35,8 @@ def read_controls(canvas: curses.window):
     return rows_direction, columns_direction, space_pressed
 
 
-def draw_frame(canvas: curses.window, start_row: FloatInt, start_column: FloatInt, text: str, negative=False) -> None:
-    """Draw multiline text fragment on canvas, erase text instead of drawing if negative=True is specified."""
+def draw_frame(canvas: curses.window, start_row: FloatInt,
+               start_column: FloatInt, text: str, negative=False) -> None:
 
     rows_number, columns_number = canvas.getmaxyx()
 
@@ -71,7 +71,6 @@ def draw_frame(canvas: curses.window, start_row: FloatInt, start_column: FloatIn
 
 
 def get_frame_size(text: str) -> Tuple[int, int]:
-    """Calculate size of multiline text fragment, return pair — number of rows and colums."""
 
     lines = text.splitlines()
     rows = len(lines)
