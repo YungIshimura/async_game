@@ -1,31 +1,39 @@
 import curses
-from tools import get_star_coroutines
-from tools import get_fire_animation_coroutine
-from tools import get_spaceship_animation_coroutine
+import random
+import time
+
+from async_animations import animate_spaceship, blink, fire
+from config import TIC_TIMEOUT, COUNT_STARS
+from tools import get_spaceship_animations
 
 
-TIC_TIMEOUT = 0.1
-
-
-def draw(canvas):
+def draw(canvas: curses.window) -> None:
     canvas.border()
-    curses.curs_set(False)
     canvas.nodelay(True)
+    courutines = []
+    y, x = curses.window.getmaxyx(canvas)
 
-    coroutines = get_star_coroutines(canvas)
-    coroutines.append(get_fire_animation_coroutine(canvas))
-    # animate_spaceship_coroutine = get_spaceship_animation_coroutine(canvas)
-    # coroutines.append(animate_spaceship_coroutine)
+    frames = get_spaceship_animations()
+
+    for _ in range(COUNT_STARS):
+        courutines.append(
+            blink(canvas, random.randint(1, y-2), random.randint(1, x-2))
+        )
+
+    courutines.append(fire(canvas, y/2, x/2))
+    courutines.append(animate_spaceship(canvas, y/2, x/2-2, frames))
 
     while True:
-        for courutine in coroutines.copy():
+        for courutine in courutines.copy():
             try:
-                courutine.send(None)     
+                courutine.send(None)
             except StopIteration:
-                coroutines.remove(courutine)
+                courutines.remove(courutine)
         canvas.refresh()
+        time.sleep(TIC_TIMEOUT)
 
 
 if __name__ == '__main__':
     curses.update_lines_cols()
     curses.wrapper(draw)
+    curses.curs_set(False)

@@ -1,83 +1,46 @@
 import os
-from random import randint, choice
-from async_animations import blink, fire, animate_spaceship
+from typing import Tuple, List
+from config import ROCKET_ANIMATION_PATH, FloatInt
+import curses
 
 
-def load_file(path):
+def get_frame_size(text: str) -> Tuple[int, int]:
+    """Calculate size of multiline text fragment. Returns pair (rows number, colums number)"""
+
+    lines = text.splitlines()
+    rows = len(lines)
+    columns = max([len(line) for line in lines])
+
+    return rows, columns
+
+
+def check_possibility_of_movement(canvas: curses.window, row: FloatInt, column: FloatInt, animation: str) -> bool:
+    canvas_rows, canvas_columns = canvas.getmaxyx()
+    border = 1
+    frame_rows, frame_columns = get_frame_size(animation)
+    max_row = canvas_rows - border - frame_rows
+    max_column = canvas_columns - border - frame_columns
+
+    if not (border <= row <= max_row and border <= column <= max_column):
+        return False
+
+    return True
+
+
+def load_file(path: str) -> str | None:
     if not os.path.exists(path):
         return None
     with open(path, 'r') as file_handler:
         animation_file = file_handler.read()
+
     return animation_file
 
 
-def get_spaceship_animations():
-    path_to_animations = [
-        os.path.join(os.getcwd(), 'animations/rocket_frame1.txt'),
-        os.path.join(os.getcwd(), 'animations/rocket_frame2.txt'),
-    ]
-    animations = [
-        load_file(path_to_animation) for path_to_animation in path_to_animations
-    ]
+def get_spaceship_animations() -> List:
+    animations = []
+    for path_to_animation in ROCKET_ANIMATION_PATH:
+        animation = load_file(path_to_animation)
+        if animation is not None:
+            animations.extend([animation, animation])
+
     return animations
-
-
-def get_spaceship_animation_coroutine(canvas):
-    spaceship_animations = get_spaceship_animations()
-    canvas_height, canvas_width = canvas.getmaxyx()
-    start_row = canvas_height / 2
-    start_column = canvas_width / 2 - 2
-    spaceship_courutine = animate_spaceship(
-        canvas,
-        start_row,
-        start_column,
-        spaceship_animations
-    )
-    return spaceship_courutine
-
-
-def get_star_coordinates(canvas):
-    border_width = 2
-    amount_of_stars = 50
-    canvas_height, canvas_width = canvas.getmaxyx()
-    star_coordinates = []
-    while len(star_coordinates) <= amount_of_stars:
-        x_coordinate = randint(
-            border_width,
-            canvas_width - border_width
-        )
-        y_coordinate = randint(
-            border_width,
-            canvas_height - border_width
-        )
-        if (y_coordinate, x_coordinate) in star_coordinates:
-            continue
-        star_coordinates.append((y_coordinate, x_coordinate))
-    return star_coordinates
-
-
-def get_star_coroutines(canvas):
-    star_types = ['*', '.', '+', ':']
-    star_coroutines = []
-    star_coordinates = get_star_coordinates(canvas)
-
-    for y_coordinate, x_coordinate in star_coordinates:
-        offset_tics = randint(100, 10000)
-        star_coroutine = blink(
-            canvas,
-            y_coordinate,
-            x_coordinate,
-            offset_tics,
-            symbol=choice(star_types)
-        )
-        star_coroutines.append(star_coroutine)
-    return star_coroutines
-
-
-def get_fire_animation_coroutine(canvas):
-    canvas_height, canvas_width = canvas.getmaxyx()
-    start_moving_y = canvas_height / 2
-    start_moving_x = canvas_width / 2 
-    fire_courutine = fire(canvas, start_moving_y, start_moving_x)
-
-    return fire_courutine
