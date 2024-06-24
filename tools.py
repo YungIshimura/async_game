@@ -1,7 +1,8 @@
-import os
-from typing import Tuple, List
-from config import ROCKET_ANIMATION_PATH, FloatInt
 import curses
+import os
+from typing import List, Tuple
+
+from config import ROCKET_ANIMATION_PATH, FloatInt
 
 
 def get_frame_size(text: str) -> Tuple[int, int]:
@@ -40,7 +41,7 @@ def get_spaceship_animations() -> List:
     animations = []
     for path_to_animation in ROCKET_ANIMATION_PATH:
         animation = load_file(path_to_animation)
-        if animation is not None:
+        if animation:
             animations.extend([animation, animation])
 
     return animations

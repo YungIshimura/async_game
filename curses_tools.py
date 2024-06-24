@@ -1,5 +1,6 @@
 import curses
 from typing import Tuple
+
 from config import (DOWN_KEY_CODE, LEFT_KEY_CODE, RIGHT_KEY_CODE,
                     SPACE_KEY_CODE, UP_KEY_CODE, FloatInt)
 

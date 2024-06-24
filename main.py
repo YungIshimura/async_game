@@ -1,8 +1,9 @@
 import curses
+import random
 import time
 
 from async_animations import animate_spaceship, blink, fire
-from config import TIC_TIMEOUT, COUNT_STARS
+from config import COUNT_STARS, TIC_TIMEOUT
 
 
 def draw(canvas: curses.window) -> None:
@@ -11,8 +12,9 @@ def draw(canvas: curses.window) -> None:
     courutines = []
 
     for _ in range(COUNT_STARS):
+        tic = random.randint(1, 20)
         courutines.append(
-            blink(canvas)
+            blink(canvas, tic)
         )
     courutines.append(fire(canvas))
     courutines.append(animate_spaceship(canvas))
