@@ -1,8 +1,8 @@
 import curses
 import os
 from typing import List, Tuple
-
-from config import ROCKET_ANIMATION_PATH, FloatInt
+import random
+from config import ROCKET_ANIMATION_PATH, GARBAGE_ANIMATION_PATH, FloatInt
 
 
 def get_frame_size(text: str) -> Tuple[int, int]:
@@ -45,3 +45,10 @@ def get_spaceship_animations() -> List:
             animations.extend([animation, animation])
 
     return animations
+
+
+def get_garbage_animation() -> str:
+    trash_animation = random.choice(GARBAGE_ANIMATION_PATH)
+    animation = load_file(trash_animation)
+
+    return animation
