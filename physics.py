@@ -1,6 +1,8 @@
 import math
+from config import FloatInt
 
-def _limit(value, min_value, max_value):
+
+def _limit(value: int, min_value: int, max_value: int) -> int:
     """Limit value by min_value and max_value."""
 
     if value < min_value:
@@ -10,7 +12,7 @@ def _limit(value, min_value, max_value):
     return value
 
 
-def _apply_acceleration(speed, speed_limit, forward=True):
+def _apply_acceleration(speed: int, speed_limit: int, forward: bool = True) -> int:
     """Change speed — accelerate or brake — according to force direction."""
 
     speed_limit = abs(speed_limit)
@@ -35,9 +37,11 @@ def _apply_acceleration(speed, speed_limit, forward=True):
     return result_speed
 
 
-def update_speed(row_speed, column_speed, rows_direction, columns_direction, row_speed_limit=2, column_speed_limit=2, fading=0.8):
+def update_speed(row_speed: int, column_speed: int, rows_direction: int,
+                 columns_direction: int, row_speed_limit: int = 2,
+                 column_speed_limit: int = 2, fading: FloatInt = 0.8) -> tuple:
     """Update speed smootly to make control handy for player. Return new speed value (row_speed, column_speed)
-    
+
     rows_direction — is a force direction by rows axis. Possible values:
        -1 — if force pulls up
        0  — if force has no effect
@@ -54,10 +58,10 @@ def update_speed(row_speed, column_speed, rows_direction, columns_direction, row
 
     if columns_direction not in (-1, 0, 1):
         raise ValueError(f'Wrong columns_direction value {columns_direction}. Expects -1, 0 or 1.')
-    
+
     if fading < 0 or fading > 1:
         raise ValueError(f'Wrong columns_direction value {fading}. Expects float between 0 and 1.')
-        
+
 
     # гасим скорость, чтобы корабль останавливался со временем
     row_speed *= fading

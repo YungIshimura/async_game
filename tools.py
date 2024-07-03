@@ -1,8 +1,10 @@
+import asyncio
 import curses
 import os
-from typing import List, Tuple
 import random
-from config import ROCKET_ANIMATION_PATH, GARBAGE_ANIMATION_PATH, FloatInt
+from typing import List, Tuple
+
+from config import GARBAGE_ANIMATION_PATH, ROCKET_ANIMATION_PATH, FloatInt
 
 
 def get_frame_size(text: str) -> Tuple[int, int]:
@@ -52,3 +54,25 @@ def get_garbage_animation() -> str:
     animation = load_file(trash_animation)
 
     return animation
+
+
+def get_garbage_delay_tics(year: int) -> int:
+    if year < 1961:
+        return 30
+    elif year < 1969:
+        return 20
+    elif year < 1981:
+        return 14
+    elif year < 1995:
+        return 10
+    elif year < 2010:
+        return 8
+    elif year < 2020:
+        return 6
+    else:
+        return 2
+
+
+async def sleep(tics: int = 1) -> None:
+    for _ in range(tics):
+        await asyncio.sleep(0)

@@ -1,31 +1,19 @@
 import curses
 import random
 import time
-from async_animations import animate_spaceship, blink, fire, get_garbage_animation, fly_garbage
-from config import COUNT_STARS, TIC_TIMEOUT
-from async_tools import sleep
 
-
-courutines = []
-
-async def fill_orbit_with_garbage(canvas):
-    _, canvas_width = canvas.getmaxyx()
-
-    while True:
-        column = random.randint(1, canvas_width-2)
-        column = max(column, 0)
-        column = min(column, canvas_width - 1)
-
-        garbage_frame = get_garbage_animation()
-        await sleep(10)
-        courutines.append(fly_garbage(canvas, garbage_frame, column))
+from async_animations import (animate_spaceship, blink,
+                              fill_orbit_with_garbage, show_title)
+from config import COUNT_STARS, TIC_TIMEOUT, YEAR_DURATION, YEAR
+from global_variables import courutines
 
 
 def draw(canvas: curses.window) -> None:
+    global YEAR
     canvas.border()
     canvas.nodelay(True)
-
     courutines.append(fill_orbit_with_garbage(canvas))
+
     for _ in range(COUNT_STARS):
         tic = random.randint(1, 20)
         courutines.append(
@@ -33,12 +21,21 @@ def draw(canvas: curses.window) -> None:
         )
     courutines.append(animate_spaceship(canvas))
 
+    year_tics = 0
+
     while True:
-        for courutine in courutines.copy():
+        for coroutine in courutines.copy():
             try:
-                courutine.send(None)
+                coroutine.send(None)
             except StopIteration:
-                courutines.remove(courutine)
+                courutines.remove(coroutine)
+
+        year_tics += 1
+        if year_tics == YEAR_DURATION:
+            courutines.append(show_title(canvas, YEAR))
+            year_tics = 0
+            YEAR += 1
+
         canvas.refresh()
         time.sleep(TIC_TIMEOUT)
 

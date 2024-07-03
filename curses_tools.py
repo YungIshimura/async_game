@@ -72,7 +72,6 @@ def draw_frame(canvas: curses.window, start_row: FloatInt,
 
 
 def get_frame_size(text: str) -> Tuple[int, int]:
-
     lines = text.splitlines()
     rows = len(lines)
     columns = max([len(line) for line in lines])
